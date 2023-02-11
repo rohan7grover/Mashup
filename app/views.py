@@ -20,14 +20,10 @@ def index(request):
                 print("No video URLs found")
                 return
             download_videos(video_urls, audio_duration_in_seconds)
-            # audio_files = [f"static/app/audio_{i+1}.mp3" for i in range(len(video_urls))]
-            # audio_files = [os.path.join("static/app", f"audio_{i+1}.mp3") for i in range(len(video_urls))]
             audio_files = [os.path.join(settings.MEDIA_ROOT, f"audio_{i+1}.mp3") for i in range(len(video_urls))]
             merge_audio_files(audio_files, f"output.mp3")
             create_zip_file(os.path.join(settings.MEDIA_ROOT, "output.mp3"), os.path.join(settings.MEDIA_ROOT, "output.zip"))
-            # create_zip_file(os.path.join("static/app", "output.mp3"), os.path.join("static/app", "output.zip"))
             default_storage.delete(os.path.join(settings.MEDIA_ROOT, "output.mp3"))
-            # default_storage.delete(os.path.join("static/app", "output.mp3"))
             send_email(email)
             default_storage.delete(os.path.join(settings.MEDIA_ROOT, "output.zip"))
         else:

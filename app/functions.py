@@ -9,10 +9,12 @@ from pydub import AudioSegment
 from pytube import YouTube
 import zipfile
 
+
 def search_videos(query, number_of_videos, results_per_page, video_duration, api_key):
     video_urls = []
     next_page_token = None
-    max_iterations = 3 # To ensure a responsible usage limit API requests being sent to the YOUTUBE API
+    # To ensure a responsible usage limit API requests being sent to the YOUTUBE API
+    max_iterations = 3
     iteration_counter = 0
 
     while True:
@@ -63,16 +65,13 @@ def download_video(url, video_filename, audio_filename, audio_duration_in_second
         video = YouTube(url)
         stream = video.streams.first()
         print(f"Downloading: {video.title}")
-        stream.download(filename=os.path.join(settings.MEDIA_ROOT, video_filename))
-        # stream.download(filename=f"static/app/{video_filename}")
-
-        audio = AudioSegment.from_file(os.path.join(settings.MEDIA_ROOT, video_filename), format="mp4")
-        # audio = AudioSegment.from_file(f"static/app/{video_filename}", format="mp4")
+        stream.download(filename=os.path.join(
+            settings.MEDIA_ROOT, video_filename))
+        audio = AudioSegment.from_file(os.path.join(
+            settings.MEDIA_ROOT, video_filename), format="mp4")
         audio = audio[:audio_duration_in_seconds * 1000]
-        # audio.export(os.path.join("static/app", audio_filename), format="mp3")
-        audio.export(os.path.join(settings.MEDIA_ROOT, audio_filename), format="mp3")
-        # os.remove(os.path.join("static/app", video_filename))
-        # os.remove(f"static/app/{video_filename}")
+        audio.export(os.path.join(settings.MEDIA_ROOT,
+                     audio_filename), format="mp3")
         os.remove(os.path.join(settings.MEDIA_ROOT, video_filename))
     except Exception as e:
         print(f"Error downloading video from URL: {url}")
@@ -98,8 +97,8 @@ def merge_audio_files(audio_files, output_file):
         for audio_file in audio_files[1:]:
             audio = audio + AudioSegment.from_file(audio_file, format="mp3")
 
-        # audio.export(f"static/app/{output_file}", format="mp3")
-        audio.export(os.path.join(settings.MEDIA_ROOT, output_file), format="mp3")
+        audio.export(os.path.join(
+            settings.MEDIA_ROOT, output_file), format="mp3")
         for audio_file in audio_files:
             os.remove(audio_file)
     except Exception as e:
