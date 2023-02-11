@@ -63,13 +63,17 @@ def download_video(url, video_filename, audio_filename, audio_duration_in_second
         video = YouTube(url)
         stream = video.streams.first()
         print(f"Downloading: {video.title}")
-        stream.download(filename=os.path.join("static/app", video_filename))
+        stream.download(filename=os.path.join(settings.MEDIA_ROOT, video_filename))
+        # stream.download(filename=f"static/app/{video_filename}")
 
-        audio = AudioSegment.from_file(os.path.join(
-            "static/app", video_filename), format="mp4")
+        audio = AudioSegment.from_file(os.path.join(settings.MEDIA_ROOT, video_filename), format="mp4")
+        # audio = AudioSegment.from_file(f"static/app/{video_filename}", format="mp4")
         audio = audio[:audio_duration_in_seconds * 1000]
-        audio.export(os.path.join("static/app", audio_filename), format="mp3")
-        os.remove(os.path.join("static/app", video_filename))
+        # audio.export(os.path.join("static/app", audio_filename), format="mp3")
+        audio.export(os.path.join(settings.MEDIA_ROOT, audio_filename), format="mp3")
+        # os.remove(os.path.join("static/app", video_filename))
+        # os.remove(f"static/app/{video_filename}")
+        os.remove(os.path.join(settings.MEDIA_ROOT, video_filename))
     except Exception as e:
         print(f"Error downloading video from URL: {url}")
         print(f"Error: {e}")
@@ -94,7 +98,8 @@ def merge_audio_files(audio_files, output_file):
         for audio_file in audio_files[1:]:
             audio = audio + AudioSegment.from_file(audio_file, format="mp3")
 
-        audio.export(os.path.join("static/app", output_file), format="mp3")
+        # audio.export(f"static/app/{output_file}", format="mp3")
+        audio.export(os.path.join(settings.MEDIA_ROOT, output_file), format="mp3")
         for audio_file in audio_files:
             os.remove(audio_file)
     except Exception as e:
@@ -108,7 +113,7 @@ def send_email(email):
         'Mashup', 'Hey there! Please find your MASHUP in the attachments', 'settings.EMAIL_HOST_USER', [
             email],
     )
-    mail.attach_file('static/app/output.zip')
+    mail.attach_file(os.path.join(settings.MEDIA_ROOT, "output.zip"))
     mail.send()
 
 
