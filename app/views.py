@@ -16,6 +16,7 @@ def index(request):
             audio_duration_in_seconds = form.cleaned_data.get("audio_duration_in_seconds")
             email = form.cleaned_data.get("email")
             video_urls = search_videos(singer_name, number_of_videos, 50, 'short', config('YOUTUBE_API_KEY'))
+            # print(video_urls)
             if not video_urls:
                 print("No video URLs found")
                 return
